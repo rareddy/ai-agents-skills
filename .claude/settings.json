@@ -12,7 +12,11 @@
       "mcp__github__*",
       "mcp__jira__*",
       "mcp__slack__*",
-      "mcp__google__*"
+      "mcp__google__*",
+      "Edit(/.claude/skills/daily-status/**)"
+    ],
+    "additionalDirectories": [
+      "/home/rareddy/development/agents/ai-agents-skills/.claude/skills"
     ]
   }
 }
