@@ -1,1 +1,1 @@
-Collection of agent and Commands for personal and team use
+Collection of Agents, Skills and Commands for personal and team use.
