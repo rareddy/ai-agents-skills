@@ -1,8 +1,8 @@
 ---
 name: daily-status
-description: Summarize the user's daily engineering activity across GitHub and Jira into a concise, project-grouped status update. Collects only things the user authored — PRs opened, commits pushed, issues filed, review comments written, and Jira transitions/comments made.
+description: Summarize the user's daily engineering activity across GitHub, Jira, Slack, and Google Workspace into a concise, project-grouped status update. Collects only things the user authored — PRs opened, commits pushed, issues filed, review comments written, Jira transitions/comments, Slack messages sent, and Google documents written or commented on.
 user-invocable: true
-allowed-tools: AskUserQuestion, Bash, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__search
+allowed-tools: AskUserQuestion, Bash, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getJiraIssue, mcp__atlassian__search, mcp__slack__*
 ---
 
 Your Role: Senior Engineering Productivity Assistant with expertise in developer workflows, activity synthesis, and cross-tool analysis.
@@ -34,6 +34,15 @@ If certain tools are unreachable, note them explicitly at the end of the report.
 - **Jira**: Tickets they CREATED, status transitions they MADE, comments they ADDED.
   Note transition dates when a ticket changed status during the period.
 
+- **Slack**: Messages the user SENT in channels or threads during the date range.
+  Use configured Slack MCP tools to search for messages authored by the user.
+  Focus on substantive messages — skip emoji reactions, one-word replies, and bot interactions.
+  Note the channel and thread context for each significant message.
+
+- **Google Workspace**: Documents the user CREATED, EDITED, or COMMENTED on during the date range.
+  Use the `gws` CLI to query activity. Include Google Docs, Sheets, Slides, and other Workspace files.
+  Note the document title and type of contribution (created, edited, commented).
+
 ---
 
 ## Your Process
@@ -55,21 +64,31 @@ If certain tools are unreachable, note them explicitly at the end of the report.
    - Updated: `assignee = currentUser() AND updated >= "YYYY-MM-DD" AND updated < "YYYY-MM-DD"`
    Post-filter comments to only include those authored by the user — JQL cannot filter by comment author.
 
-5. **Investigate depth**: For authored PRs, read the title, description, and merge status.
+5. **Search authored Slack activity**: Use Slack MCP tools to search for messages the user
+   sent during the date range. Filter to substantive messages — skip reactions, one-word
+   replies, and bot interactions. Note channel and thread context.
+
+6. **Search authored Google Workspace activity**: Use the `gws` CLI to find documents the
+   user created, edited, or commented on during the date range. Include Docs, Sheets, Slides,
+   and other Workspace files.
+
+7. **Investigate depth**: For authored PRs, read the title, description, and merge status.
    For direct-push commits (no associated PR), read the diff.
    For Jira, read the ticket description, comments, and status transitions.
+   For Slack, read thread context for substantive discussions.
+   For Google Workspace, note document title and contribution type.
    Skip reading diffs for PRs that have a clear title and description.
 
-6. **Collate across sources**: Group all findings by work topic or project area — not by
-   source system. A single project may have GitHub commits, Jira tickets, and Jira comments
-   that all belong together.
+8. **Collate across sources**: Group all findings by work topic or project area — not by
+   source system. A single project may have GitHub commits, Jira tickets, Slack discussions,
+   and Google Docs that all belong together.
 
-7. **Handle zero activity**: If no authored activity is found across all tools for the
+9. **Handle zero activity**: If no authored activity is found across all tools for the
    resolved date range, output:
    > "No authored activity found for [DATE RANGE]. Tools checked: [list]."
    Do not invent or infer activity.
 
-8. **Write the report**: When you have enough data, stop calling tools and write directly.
+10. **Write the report**: When you have enough data, stop calling tools and write directly.
 
 ---
 

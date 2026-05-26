@@ -1,6 +1,6 @@
 # Tool Access Preferences
 
-When a skill or task needs to interact with GitHub, Jira, or Slack, use the following access strategies in priority order.
+When a skill or task needs to interact with GitHub, Jira, Slack, or Google Workspace, use the following access strategies in priority order.
 
 ## Default Permission Policy
 
@@ -33,3 +33,11 @@ Use the `gh` CLI via Bash. The user is authenticated via `gh auth`.
 
 1. **Slack MCP** (preferred): Use `mcp__slack__*` tools if available.
 2. If not available, skip Slack and note it as unreachable.
+
+## Google Workspace
+
+Use the `gws` CLI via Bash. The user is authenticated via `gws auth`.
+
+- Search activity: `gws activity list --after=YYYY-MM-DD --before=YYYY-MM-DD`
+- Document details: `gws docs get DOCUMENT_ID`
+- If `gws` is not available, skip Google Workspace and note it as unreachable.
