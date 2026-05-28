@@ -64,13 +64,28 @@ If certain tools are unreachable, note them explicitly at the end of the report.
    - Updated: `assignee = currentUser() AND updated >= "YYYY-MM-DD" AND updated < "YYYY-MM-DD"`
    Post-filter comments to only include those authored by the user — JQL cannot filter by comment author.
 
-5. **Search authored Slack activity**: Use Slack MCP tools to search for messages the user
-   sent during the date range. Filter to substantive messages — skip reactions, one-word
-   replies, and bot interactions. Note channel and thread context.
+5. **Validate Slack tokens, then search authored Slack activity**:
+   First run:
+   ```
+   python3 .claude/skills/daily-status/slack_token_validate.py
+   ```
+   - If output is `{"status": "valid", ...}` — proceed to search Slack.
+   - If output is `{"status": "expired", ...}` — automatically invoke the `slack-login`
+     skill to refresh tokens (do not ask the user, just run it), then re-run the validation
+     script to confirm tokens are now valid before proceeding.
+
+   Once tokens are confirmed valid, use Slack MCP tools to search for messages sent by the
+   user in the date range. Filter to substantive messages — skip reactions, one-word replies,
+   and bot interactions. Note channel and thread context.
 
 6. **Search authored Google Workspace activity**: Use the `gws` CLI to find documents the
-   user created, edited, or commented on during the date range. Include Docs, Sheets, Slides,
-   and other Workspace files.
+   user created or edited during the date range. Query Drive files owned by the user:
+   ```
+   gws drive files list --params '{"q": "\"me\" in owners and modifiedTime > \"YYYY-MM-DDT00:00:00Z\" and modifiedTime < \"YYYY-MM-DDT00:00:00Z\"", "fields": "files(id,name,mimeType,modifiedTime)", "pageSize": 50}'
+   ```
+   If `gws` returns an auth error (exit code 2), run `gws auth login` and walk the user
+   through the login flow before retrying. Do NOT mark as unreachable until login has been
+   attempted. Note the document title and contribution type (created, edited).
 
 7. **Investigate depth**: For authored PRs, read the title, description, and merge status.
    For direct-push commits (no associated PR), read the diff.

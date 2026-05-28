@@ -36,8 +36,8 @@ Use the `gh` CLI via Bash. The user is authenticated via `gh auth`.
 
 ## Google Workspace
 
-Use the `gws` CLI via Bash. The user is authenticated via `gws auth`.
+Use the `gws` CLI via Bash.
 
-- Search activity: `gws activity list --after=YYYY-MM-DD --before=YYYY-MM-DD`
-- Document details: `gws docs get DOCUMENT_ID`
-- If `gws` is not available, skip Google Workspace and note it as unreachable.
+- Files owned and edited by the user: `gws drive files list --params '{"q": "\"me\" in owners and modifiedTime > \"YYYY-MM-DDT00:00:00Z\" and modifiedTime < \"YYYY-MM-DDT00:00:00Z\"", "fields": "files(id,name,mimeType,modifiedTime)", "pageSize": 50}'`
+- Document details: `gws docs documents get --params '{"documentId": "DOC_ID"}'`
+- If `gws` returns an auth error (exit code 2), run `gws auth login` and walk the user through the login flow. Do NOT skip as unreachable until login has been attempted.
